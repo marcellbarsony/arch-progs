@@ -3,6 +3,8 @@
 Author: Marcell Barsony
 Date  : June 2023
 Desc  : Xwallpaper tools
+TODO  : - Mobile wallpaper exception
+        - Wallpaper history
 """
 
 
@@ -100,8 +102,8 @@ class Update():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='venv.py',
-        description='Virtual environment helper',
+        prog='xwall.py',
+        description='X11 wallpaper setup',
         epilog='TODO'
         )
 
