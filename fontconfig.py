@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Author: Marcell Barsony
-Date  : June 23
+Date  : June 2023
 Desc  : Font management tool
 """
 

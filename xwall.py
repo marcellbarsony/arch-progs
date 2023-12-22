@@ -3,7 +3,7 @@
 Author: Marcell Barsony
 Date  : June 2023
 Desc  : Xwallpaper tools
-TODO  : - Mobile wallpaper exception
+TODO  : - Exclude Mobile & Windows
         - Wallpaper history
 """
 
@@ -18,7 +18,7 @@ import zipfile
 
 
 user = os.getlogin()
-path = f'/home/{user}/Pictures'
+path = f"/home/{user}/Downloads/Backgrounds"
 
 
 class Display():
@@ -27,7 +27,7 @@ class Display():
 
     @staticmethod
     def get_displays() -> list:
-        result = subprocess.run('xrandr', capture_output=True, text=True)
+        result = subprocess.run("xrandr", capture_output=True, text=True)
         displays = []
         for line in result.stdout.splitlines():
             words = line.split()
@@ -40,8 +40,8 @@ class Display():
     def remove_display(displays: list):
         if len(displays) > 1:
             for display in displays:
-                if display == 'eDP1' or display == 'eDP-1':
-                    subprocess.run(f'xrandr --output {display} --off', shell=True)
+                if display == "eDP1" or display == "eDP-1":
+                    subprocess.run(f"xrandr --output {display} --off", shell=True)
                     displays.remove(display)
         return displays
 
@@ -54,6 +54,8 @@ class Wallpaper():
     def get_files(path: str) -> list:
         files = []
         for root, _, filenames in os.walk(path):
+            if "mobile" in root or "windows" in root:
+                continue
             for filename in filenames:
                 files.append(os.path.join(root, filename))
         return files
@@ -66,7 +68,7 @@ class Wallpaper():
     @staticmethod
     def set_wallpaper(displays: list, file: str):
         for display in displays:
-            cmd = f'xwallpaper --output {display} --stretch {file}'
+            cmd = f"xwallpaper --output {display} --stretch {file}"
             subprocess.run(cmd, shell=True)
 
 
@@ -76,39 +78,39 @@ class Update():
 
     def __init__(self, path: str):
         self.path = path
-        self.url = 'https://www.dropbox.com/sh/eo65dcs7buprzea/AABSnhAm1sswyiukCDW9Urp9a?dl=1'
-        self.out = f'{self.path}/wallpapers.zip'
+        self.url = "https://www.dropbox.com/scl/fo/5loqjisrohzslojb5ibmw/h?rlkey=onmox6lkop8uf9wzd314pbj66&dl=1"
+        self.out = f"{self.path}/wallpapers.zip"
 
     def directory(self):
         if os.path.exists(self.path):
             shutil.rmtree(self.path, ignore_errors=True)
-            print('[+] Removing wallpapers')
+            print("[+] Removing wallpapers")
             os.mkdir(self.path)
-            print('[+] Creating directory')
+            print("[+] Creating directory")
         else:
             os.mkdir(self.path)
-            print('[+] Creating directory')
+            print("[+] Creating directory")
 
     def download(self):
-        print('[+] Downloading...')
+        print("[I] Downloading...")
         urllib.request.urlretrieve(self.url, self.out)
 
     def unzip(self):
-        with zipfile.ZipFile(self.out, 'r') as zip_ref:
+        with zipfile.ZipFile(self.out, "r") as zip_ref:
             zip_ref.extractall(self.path)
-        print('[+] Unzipping')
+        print("[+] Unzipping")
         os.remove(self.out)
-        print('[+] Removing zip')
+        print("[+] Removing zip")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='xwall.py',
-        description='X11 wallpaper setup',
-        epilog='TODO'
-        )
+        prog="xwall.py",
+        description="X11 wallpaper setup",
+        epilog="TODO"
+    )
 
-    parser.add_argument('-r', '--random', action='store_true', help='Random wallapper')
-    parser.add_argument('-u', '--update', action='store_true', help='Update wallpapers')
+    parser.add_argument("-r", "--random", action="store_true", help="Random wallapper")
+    parser.add_argument("-u", "--update", action="store_true", help="Update wallpapers")
 
     args = parser.parse_args()
 
@@ -120,7 +122,7 @@ if __name__ == "__main__":
         files = w.get_files(path)
         file = w.get_random(files)
         w.set_wallpaper(displays, file)
-        print('[+] Random wallpaper ' + str(displays))
+        print("[+] Random wallpaper " + str(displays))
 
     if args.update:
         u = Update(path)

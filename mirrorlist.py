@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Author: Marcell Barsony
-Date  : 05/13/23
-Desc  : Refresh mirrorlist
+Date  : May 2023
+Desc  : Update Pacman mirrorlist
 """
 
 
